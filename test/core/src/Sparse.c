@@ -4316,7 +4316,6 @@ void Sparse_on_delete_target_sparse_delete(void) {
     ecs_world_t *world = ecs_mini();
 
     ECS_TAG(world, Rel);
-    
 
     ecs_add_id(world, Rel, EcsSparse);
     if (!fragment) ecs_add_id(world, Rel, EcsDontFragment);
@@ -4353,4 +4352,46 @@ void Sparse_on_delete_target_sparse_panic(void) {
 
     test_expect_abort();
     ecs_delete(world, tgt);
+}
+
+void Sparse_get_sparse(void) {
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+
+    ecs_add_id(world, ecs_id(Position), EcsSparse);
+    if (!fragment) ecs_add_id(world, ecs_id(Position), EcsDontFragment);
+
+    ecs_entity_t e = ecs_new(world);
+    test_assert(ecs_get(world, e, Position) == NULL);
+
+    ecs_set(world, e, Position, {10, 20});
+
+    Position *p = ecs_get_sparse(world, e, Position);
+    test_assert(p != NULL);
+    test_int(p->x, 10);
+    test_int(p->y, 20);
+
+    ecs_remove(world, e, Position);
+
+    test_assert(ecs_get(world, e, Position) == NULL);
+
+    ecs_fini(world);
+}
+
+void Sparse_get_fast(void) {
+    install_test_abort();
+
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+
+    ecs_add_id(world, ecs_id(Position), EcsSparse);
+    if (!fragment) ecs_add_id(world, ecs_id(Position), EcsDontFragment);
+
+    ecs_entity_t e = ecs_new(world);
+    ecs_set(world, e, Position, {10, 20});
+
+    test_expect_abort();
+    ecs_get_fast(world, e, Position);
 }

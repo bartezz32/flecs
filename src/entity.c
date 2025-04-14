@@ -3502,6 +3502,78 @@ error:
     return NULL;
 }
 
+void* ecs_get_sparse_id(
+    const ecs_world_t *world,
+    ecs_entity_t entity,
+    ecs_id_t id)
+{
+    ecs_check(world != NULL, ECS_INVALID_PARAMETER, NULL);
+    ecs_check(ecs_is_alive(world, entity), ECS_INVALID_PARAMETER, NULL);
+
+    world = ecs_get_world(world);
+
+    ecs_component_record_t *cr = flecs_components_get(world, id);
+    ecs_check(cr != NULL, ECS_INVALID_PARAMETER, NULL);
+    ecs_check(cr->flags & EcsIdIsSparse, ECS_INVALID_PARAMETER, NULL);
+
+    return flecs_component_sparse_get(cr, entity);
+error:
+    return NULL;
+}
+
+void* ecs_get_fast_id(
+    const ecs_world_t *world,
+    ecs_entity_t entity,
+    ecs_id_t id)
+{
+    ecs_check(world != NULL, ECS_INVALID_PARAMETER, NULL);
+    ecs_check(ecs_is_alive(world, entity), ECS_INVALID_PARAMETER, NULL);
+
+    world = ecs_get_world(world);
+
+    ecs_record_t *r = flecs_entities_get(world, entity);
+    ecs_assert(r != NULL, ECS_INVALID_PARAMETER, NULL);
+    ecs_table_t *table = r->table;
+    ecs_assert(table != NULL, ECS_INTERNAL_ERROR, NULL);
+
+    if (id < FLECS_HI_COMPONENT_ID) {
+        ecs_check(!world->non_fragmenting[id], ECS_INVALID_PARAMETER, 
+            "don't use ecs_get_fast for sparse components");
+
+        int16_t column_index = table->component_map[id];
+        ecs_check(column_index >= 0, ECS_INVALID_PARAMETER, 
+            "don't use ecs_get_fast for sparse components");
+
+        if (column_index > 0) {
+            ecs_column_t *column = &table->data.columns[column_index - 1];
+            return ECS_ELEM(column->data, column->ti->size, 
+                ECS_RECORD_TO_ROW(r->row));
+        }
+    } else {
+        ecs_component_record_t *cr = flecs_components_get(world, id);
+        if (!cr) {
+            return NULL;
+        }
+
+        ecs_check(!(cr->flags & EcsIdDontFragment), ECS_INVALID_PARAMETER, 
+            "don't use ecs_get_fast for sparse components");
+    
+        const ecs_table_record_t *tr = flecs_component_get_table(cr, table);
+        if (!tr) {
+            return NULL;
+        }
+
+        ecs_check(tr->column != -1, ECS_NOT_A_COMPONENT, NULL);
+
+        ecs_column_t *column = &table->data.columns[tr->column];
+        return ECS_ELEM(column->data, column->ti->size, 
+            ECS_RECORD_TO_ROW(r->row));
+    }
+
+error:
+    return NULL;
+}
+
 void* ecs_ensure_id(
     ecs_world_t *world,
     ecs_entity_t entity,

@@ -6827,8 +6827,7 @@ bool ecs_is_enabled_id(
  */
 
 /** Get an immutable pointer to a component.
- * This operation obtains a const pointer to the requested component. The
- * operation accepts the component entity id.
+ * This operation obtains a const pointer to the requested component.
  * 
  * This operation can return inherited components reachable through an `IsA`
  * relationship.
@@ -6847,10 +6846,9 @@ FLECS_ALWAYS_INLINE const void* ecs_get_id(
     ecs_id_t id);
 
 /** Get a mutable pointer to a component.
- * This operation obtains a mutable pointer to the requested component. The
- * operation accepts the component entity id.
+ * This operation obtains a mutable pointer to the requested component.
  * 
- * Unlike ecs_get_id(), this operation does not return inherited components.
+ * This operation does not return inherited components.
  *
  * @param world The world.
  * @param entity The entity.
@@ -6859,6 +6857,44 @@ FLECS_ALWAYS_INLINE const void* ecs_get_id(
  */
 FLECS_API
 FLECS_ALWAYS_INLINE void* ecs_get_mut_id(
+    const ecs_world_t *world,
+    ecs_entity_t entity,
+    ecs_id_t id);
+
+/** Get a mutable pointer to a sparse component.
+ * This operation obtains a mutable pointer to the requested component and
+ * should only be used for components that are sparse.
+ * 
+ * While sparse components can be obtained with ecs_get_id and ecs_get_mut_id,
+ * this operation is a significantly faster alternative if the application knows
+ * that the component will be sparse.
+ * 
+ * This operation does not return inherited components.
+ *
+ * @param world The world.
+ * @param entity The entity.
+ * @param id The id of the component to get.
+ * @return The component pointer, NULL if the entity does not have the component.
+ */
+FLECS_API
+FLECS_ALWAYS_INLINE void* ecs_get_sparse_id(
+    const ecs_world_t *world,
+    ecs_entity_t entity,
+    ecs_id_t id);
+
+/** Get a mutable pointer to a trivial component.
+ * This operation obtains a mutable pointer to the requested component and 
+ * should only be used for components that are not sparse.
+ * 
+ * This operation does not return inherited components.
+ *
+ * @param world The world.
+ * @param entity The entity.
+ * @param id The id of the component to get.
+ * @return The component pointer, NULL if the entity does not have the component.
+ */
+FLECS_API
+FLECS_ALWAYS_INLINE void* ecs_get_fast_id(
     const ecs_world_t *world,
     ecs_entity_t entity,
     ecs_id_t id);

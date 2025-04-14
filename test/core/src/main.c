@@ -448,6 +448,8 @@ void Sparse_owns(void);
 void Sparse_owns_pair(void);
 void Sparse_owns_pair_wildcard(void);
 void Sparse_get(void);
+void Sparse_get_sparse(void);
+void Sparse_get_fast(void);
 void Sparse_add_remove(void);
 void Sparse_add_remove_tag(void);
 void Sparse_add_remove_pair(void);
@@ -778,6 +780,11 @@ void Get_component_ensure_equal_get(void);
 void Get_component_get_tag(void);
 void Get_component_get_pair_tag(void);
 void Get_component_get_wildcard(void);
+void Get_component_get_sparse(void);
+void Get_component_get_fast(void);
+void Get_component_get_fast_pair(void);
+void Get_component_get_fast_pair_second(void);
+void Get_component_get_fast_tag(void);
 
 // Testsuite 'Reference'
 void Reference_setup(void);
@@ -4129,6 +4136,14 @@ bake_test_case Sparse_testcases[] = {
         Sparse_get
     },
     {
+        "get_sparse",
+        Sparse_get_sparse
+    },
+    {
+        "get_fast",
+        Sparse_get_fast
+    },
+    {
         "add_remove",
         Sparse_add_remove
     },
@@ -5414,6 +5429,26 @@ bake_test_case Get_component_testcases[] = {
     {
         "get_wildcard",
         Get_component_get_wildcard
+    },
+    {
+        "get_sparse",
+        Get_component_get_sparse
+    },
+    {
+        "get_fast",
+        Get_component_get_fast
+    },
+    {
+        "get_fast_pair",
+        Get_component_get_fast_pair
+    },
+    {
+        "get_fast_pair_second",
+        Get_component_get_fast_pair_second
+    },
+    {
+        "get_fast_tag",
+        Get_component_get_fast_tag
     }
 };
 
@@ -11931,7 +11966,7 @@ static bake_test_suite suites[] = {
         "Sparse",
         Sparse_setup,
         NULL,
-        130,
+        132,
         Sparse_testcases,
         1,
         Sparse_params
@@ -11968,7 +12003,7 @@ static bake_test_suite suites[] = {
         "Get_component",
         Get_component_setup,
         NULL,
-        14,
+        19,
         Get_component_testcases
     },
     {

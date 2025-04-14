@@ -417,6 +417,32 @@
 #define ecs_get_mut(world, entity, T)\
     (ECS_CAST(T*, ecs_get_mut_id(world, entity, ecs_id(T))))
 
+/* get fast */
+
+#define ecs_get_fast(world, entity, T)\
+    (ECS_CAST(T*, ecs_get_fast_id(world, entity, ecs_id(T))))
+
+#define ecs_get_fast_pair(world, subject, First, second)\
+    (ECS_CAST(First*, ecs_get_fast_id(world, subject,\
+        ecs_pair(ecs_id(First), second))))
+
+#define ecs_get_fast_pair_second(world, subject, first, Second)\
+    (ECS_CAST(Second*, ecs_get_fast_id(world, subject,\
+        ecs_pair(first, ecs_id(Second)))))
+
+/* get sparse */
+
+#define ecs_get_sparse(world, entity, T)\
+    (ECS_CAST(T*, ecs_get_sparse_id(world, entity, ecs_id(T))))
+
+#define ecs_get_sparse_pair(world, subject, First, second)\
+    (ECS_CAST(First*, ecs_get_sparse_id(world, subject,\
+        ecs_pair(ecs_id(First), second))))
+
+#define ecs_get_sparse_pair_second(world, subject, first, Second)\
+    (ECS_CAST(Second*, ecs_get_sparse_id(world, subject,\
+        ecs_pair(first, ecs_id(Second)))))
+
 /* ensure */
 
 #define ecs_ensure(world, entity, T)\

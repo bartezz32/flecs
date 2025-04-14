@@ -281,3 +281,98 @@ void Get_component_get_wildcard(void) {
 
     ecs_fini(world);
 }
+
+void Get_component_get_sparse(void) {
+    install_test_abort();
+
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+    
+    ecs_entity_t e = ecs_insert(world, ecs_value(Position, {10, 20}));
+
+    test_expect_abort();
+    ecs_get_sparse(world, e, Position);
+}
+
+void Get_component_get_fast(void) {
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+    
+    ecs_entity_t e = ecs_new(world);
+    test_assert(ecs_get_fast(world, e, Position) == NULL);
+
+    ecs_set(world, e, Position, {10, 20});
+
+    {
+        Position *p = ecs_get_fast(world, e, Position);
+        test_assert(p != NULL);
+        test_int(p->x, 10);
+        test_int(p->y, 20);
+    }
+
+    ecs_remove(world, e, Position);
+
+    test_assert(ecs_get_fast(world, e, Position) == NULL);
+}
+
+void Get_component_get_fast_pair(void) {
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+    ECS_TAG(world, Tgt);
+    
+    ecs_entity_t e = ecs_new(world);
+    test_assert(ecs_get_fast_pair(world, e, Position, Tgt) == NULL);
+
+    ecs_set_pair(world, e, Position, Tgt, {10, 20});
+
+    {
+        Position *p = ecs_get_fast_pair(world, e, Position, Tgt);
+        test_assert(p != NULL);
+        test_int(p->x, 10);
+        test_int(p->y, 20);
+    }
+
+    ecs_remove_pair(world, e, ecs_id(Position), Tgt);
+
+    test_assert(ecs_get_fast_pair(world, e, Position, Tgt) == NULL);
+}
+
+void Get_component_get_fast_pair_second(void) {
+    ecs_world_t *world = ecs_mini();
+
+    ECS_COMPONENT(world, Position);
+    ECS_TAG(world, Tgt);
+    
+    ecs_entity_t e = ecs_new(world);
+    test_assert(ecs_get_fast_pair_second(world, e, Tgt, Position) == NULL);
+
+    ecs_set_pair_second(world, e, Tgt, Position, {10, 20});
+
+    {
+        Position *p = ecs_get_fast_pair_second(world, e, Tgt, Position);
+        test_assert(p != NULL);
+        test_int(p->x, 10);
+        test_int(p->y, 20);
+    }
+
+    ecs_remove_pair(world, e, Tgt, ecs_id(Position));
+
+    test_assert(ecs_get_fast_pair_second(world, e, Tgt, Position) == NULL);
+}
+
+void Get_component_get_fast_tag(void) {
+    install_test_abort();
+
+    ecs_world_t *world = ecs_mini();
+
+    ECS_TAG(world, Foo);
+    
+    ecs_entity_t e = ecs_new(world);
+    ecs_add(world, e, Foo);
+
+    test_expect_abort();
+    ecs_get_fast_id(world, e, Foo);
+}

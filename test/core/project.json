@@ -478,6 +478,8 @@
                 "owns_pair",
                 "owns_pair_wildcard",
                 "get",
+                "get_sparse",
+                "get_fast",
                 "add_remove",
                 "add_remove_tag",
                 "add_remove_pair",
@@ -817,7 +819,12 @@
                 "ensure_equal_get",
                 "get_tag",
                 "get_pair_tag",
-                "get_wildcard"
+                "get_wildcard",
+                "get_sparse",
+                "get_fast",
+                "get_fast_pair",
+                "get_fast_pair_second",
+                "get_fast_tag"
             ]
         }, {
             "id": "Reference",
